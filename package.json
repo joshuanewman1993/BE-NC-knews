@@ -14,7 +14,8 @@
 		"migrate:latest": "knex migrate:latest --env test",
 		"migrate:rollback": "knex migrate:rollback --env test",
 		"create:seed": "knex seed:make seed",
-		"lint:fix": "eslint --fix ./"
+		"lint:fix": "eslint --fix ./",
+		"seed:run": "npm run migrate:rollback && npm run migrate:latest && NODE_ENV=test knex seed:run --env test"
 	},
 	"repository": {
 		"type": "git",
