@@ -53,16 +53,58 @@ describe('/api', () => {
           expect(body.topic.slug).to.eql('josh');
         });
     });
-    it('GET request returns 200 and responds with all the articles for a specifc topic', () => request
+    it('GET request returns 200 and responds with the correct keys for the data sent back!', () => request
       .get('/api/topics/cats/articles')
       .expect(200)
       .then(({ body }) => {
-        console.log(body.data);
-        expect(body.data[0].topic).to.eql('cats');
-        expect(body.data[0].title).to.eql('UNCOVERED: catspiracy to bring down democracy');
-        expect(body.data[0].body).to.eql(
-          'Bastet walks amongst us, and the cats are taking arms!',
+        expect(body.data[0]).to.have.all.keys(
+          'author',
+          'title',
+          'article_id',
+          'votes',
+          'created_at',
+          'topic',
+          'comment_count',
         );
+      }));
+    it('GET request returns 200 and responds with the correct data!', () => request
+      .get('/api/topics/cats/articles')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data[0].author).to.eql('rogersop');
+        expect(body.data[0].article_id).to.eql(5);
+        expect(body.data[0].votes).to.eql(0);
+      }));
+    it('GET request returns 200 and tests the req.parmas.topic is equal to the topic in the data sent back!', () => request
+      .get('/api/topics/cats/articles')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data[0].topic).to.eql('cats');
+      }));
+
+    it('GET request returns 200 and tests the count works succesufully and count all the comment for that specifc id', () => request
+      .get('/api/topics/cats/articles')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data[0].comment_count).to.eql('2');
+      }));
+    it('GET request returns 200 and tests the limit default to 10 so only 10 will show per page', () => request
+      .get('/api/topics/mitch/articles?limit=3')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data).to.have.length(3);
+      }));
+    it('GET request returns 200 and tests that it comes back in ascending order when the query is set to true', () => request
+      .get('/api/topics/mitch/articles?sort_ascending=true')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data[0].title).to.eql('Moustache');
+      }));
+    it('GET request returns 200 and tests that it comes back in descedning order as default', () => request
+      .get('/api/topics/mitch/articles')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data[0].title).to.eql('Living in the shadow of a great man');
       }));
   });
 });
