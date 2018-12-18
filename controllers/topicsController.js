@@ -53,3 +53,14 @@ exports.getArticleByTopicId = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.addArticleByTopicId = (req, res, next) => {
+  connection
+    .insert(req.body)
+    .into('articles')
+    .returning('*')
+    .then(([articleAdded]) => {
+      res.status(201).send({ articleAdded });
+    })
+    .catch(next);
+};
