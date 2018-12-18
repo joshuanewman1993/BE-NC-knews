@@ -1,7 +1,10 @@
 const express = require('express');
-// const apiRouter = require('./routes/apiroute');
-const app = express();
 
-// app.use('/api', apiRouter);
+const app = express();
+const bodyParser = require('body-parser');
+const apiRouter = require('./routes/apiRoute');
+
+app.use(bodyParser.json());
+app.use('/api', apiRouter);
 
 module.exports = app;
