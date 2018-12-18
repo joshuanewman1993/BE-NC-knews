@@ -32,3 +32,7 @@ exports.formatComments = (comments, article) => {
 		};
 	});
 };
+
+// Strategy 1 : map and then use find
+// Strategy 2 : map and filter
+// Strategy 3 : map and ref object
