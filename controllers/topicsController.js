@@ -38,7 +38,7 @@ exports.getArticleByTopicId = (req, res, next) => {
     .where('topic', '=', req.params.topic)
     .limit(limit)
     .offset(limit * page)
-    .orderBy(`articles.${sort_criteria}`, sort_ascending ? 'asc' : 'desc')
+    .orderBy(`${sort_criteria}`, sort_ascending ? 'asc' : 'desc')
     .groupBy(
       'articles.username',
       'articles.title',

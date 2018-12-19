@@ -4,6 +4,7 @@ const {
   getArticleById,
   updateArticle,
   deleteArticle,
+  getCommentsByArticleId,
 } = require('../controllers/articlesController');
 const { handle405 } = require('../errors/index');
 
@@ -19,4 +20,8 @@ articlesRouter
   .delete(deleteArticle)
   .all(handle405);
 
+articlesRouter
+  .route('/:article_id/comments')
+  .get(getCommentsByArticleId)
+  .all(handle405);
 module.exports = articlesRouter;

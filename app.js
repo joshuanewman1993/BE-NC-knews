@@ -1,7 +1,7 @@
 const express = require('express');
 const { handle400, handle404 } = require('./errors/index');
 
-// process.env.NODE_ENV = 'test';
+process.env.NODE_ENV = 'test';
 
 const app = express();
 const bodyParser = require('body-parser');

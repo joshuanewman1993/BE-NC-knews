@@ -257,7 +257,7 @@ describe('/api', () => {
       it('DELETE status returns 405 - client not allowed to execute that method', () => request.delete('/api/articles').expect(405));
     });
   });
-  describe.only('/api/articles/:article_id', () => {
+  describe('/api/articles/:article_id', () => {
     it('GET request returns 200 and an array of articles with the correct properties by a specfic article ID', () => request
       .get('/api/articles/1')
       .expect(200)
@@ -304,12 +304,65 @@ describe('/api', () => {
       }));
   });
 
-  describe.only('Error Handling : api/aricles/:article_id', () => {
+  describe('Error Handling : api/aricles/:article_id', () => {
     it('GET status returns 404 - client has inputted an incorrect parametic query (aritcle_id)', () => request.get('/api/articles/3222').expect(404));
     it('PATCH status returns 400 - client has inputted incorrect data', () => request
       .patch('/api/articles/2')
       .send({ inc_votes: 'hello' })
       .expect(400));
     it('DELETE status returns 404 - client has inputted an incorrect parametic query (aritcle_id) to delete', () => request.delete('/api/articles/3222').expect(404));
+  });
+  describe.only('/api/articles/:article_id/comments', () => {
+    it('GET request returns 200 with the correct comments data by specific article_id and the object properties are correct.', () => request
+      .get('/api/articles/9/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data[0]).to.have.all.keys(
+          'comment_id',
+          'votes',
+          'created_at',
+          'author',
+          'body',
+        );
+      }));
+    it('GET request returns 200 with the correct comments data for that specifc article_id.', () => request
+      .get('/api/articles/9/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data[0].comment_id).to.eql(1);
+        expect(body.data[0].votes).to.eql(16);
+        expect(body.data[0].author).to.eql('butter_bridge');
+      }));
+    describe('Queries: Limit', () => {
+      it('GET request returns 200 and limits the number of the page to one as set in the query', () => request
+        .get('/api/articles/9/comments?limit=1')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.data).to.have.length(1);
+        }));
+    });
+    describe('Queries: SortBy & SortAscending', () => {
+      it('GET request returns 200 and tests that the data comes back in descending order by default', () => request
+        .get('/api/articles/9/comments')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.data[0].comment_id).to.eql(1);
+        }));
+      it('GET request returns 200 and tests that the data comes back in descending order by default', () => request
+        .get('/api/articles/9/comments?sort_ascending=true')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.data[0].comment_id).to.eql(17);
+        }));
+      it('GET request returns 200 and tests that the data gets sorted by votes in descending order by default', () => request
+        .get('/api/articles/1/comments?sort_criteria=votes')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.data[0].votes).to.eql(100);
+        }));
+    });
+  });
+  describe('Error Handling : api/aricles/:article_id/comments', () => {
+    it('GET status returns 404 - client has inputted an incorrect parametic query (aritcle_id)', () => request.get('/api/articles/3222').expect(404));
   });
 });

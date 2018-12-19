@@ -98,3 +98,28 @@ exports.deleteArticle = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.getCommentsByArticleId = (req, res, next) => {
+  const {
+    limit = 10, sort_criteria = 'created_at', sort_ascending = false, page = 0,
+  } = req.query;
+  connection
+    .select(
+      'comment_id',
+      'comments.votes',
+      'comments.created_at',
+      'articles.username AS author',
+      'comments.body',
+    )
+    .from('comments')
+    .rightJoin('articles', 'articles.article_id', '=', 'comments.article_id')
+    .where('articles.article_id', '=', req.params.article_id)
+    .limit(limit)
+    .offset(limit * page)
+    .orderBy(`${sort_criteria}`, sort_ascending ? 'asc' : 'desc')
+    .then((data) => {
+      if (!data) return Promise.reject({ status: 404, msg: 'article not found' });
+      res.status(200).send({ data });
+    })
+    .catch(next);
+};
