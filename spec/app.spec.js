@@ -118,21 +118,58 @@ describe('/api', () => {
             expect(body.data[0].title).to.eql('Living in the shadow of a great man');
           }));
       });
+      describe('Queries: Page', () => {
+        it('GET request returns 200 and test that the page works succesfully when the page is set to 1 it will skip the first 10 values', () => request
+          .get('/api/topics/mitch/articles?page=1')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.data).to.have.length(1);
+          }));
+      });
     });
     describe('POST /api/topics/:topic/articles', () => {
       it('POST request returns 201 and responds with the correct newly added article data', () => {
         const newArticle = {
           title: 'Just another day at northcoders',
           body: 'Been a super day!',
-          username: 'josh123',
+          username: 'butter_bridge',
         };
         return request
-          .post('/api/topics/:topic/articles')
+          .post('/api/topics/cats/articles')
           .expect(201)
           .send(newArticle)
           .then(({ body }) => {
-            console.log(body);
-            expect(body.article).to.eql(newArticle);
+            expect(body.articleAdded.article_id).to.eql(13);
+            expect(body.articleAdded.title).to.eql('Just another day at northcoders');
+            expect(body.articleAdded.username).to.eql('butter_bridge');
+          });
+      });
+      it('POST request returns 201 and that the topic is added through the parametic query', () => {
+        const newArticle = {
+          title: 'Just another day at northcoders',
+          body: 'Been a super day!',
+          username: 'butter_bridge',
+        };
+        return request
+          .post('/api/topics/cats/articles')
+          .expect(201)
+          .send(newArticle)
+          .then(({ body }) => {
+            expect(body.articleAdded.topic).to.eql('cats');
+          });
+      });
+      it('POST request returns 201 and that the vote is added and set to 0 by default', () => {
+        const newArticle = {
+          title: 'Just another day at northcoders',
+          body: 'Been a super day!',
+          username: 'butter_bridge',
+        };
+        return request
+          .post('/api/topics/cats/articles')
+          .expect(201)
+          .send(newArticle)
+          .then(({ body }) => {
+            expect(body.articleAdded.votes).to.eql(0);
           });
       });
     });
@@ -142,17 +179,55 @@ describe('/api', () => {
       it('GET request returns 200 and an array of articles with the correct properties', () => request
         .get('/api/articles')
         .expect(200)
-        .then(({ body: articles }) => {
-          expect(articles).to.be.an('array');
-          expect(articles[0]).to.have.all.keys(
-            'article_id',
+        .then(({ body }) => {
+          expect(body.data).to.be.an('array');
+          expect(body.data[0]).to.have.all.keys(
+            'author',
             'title',
-            'topic',
-            'username',
-            'body',
-            'created_at',
+            'article_id',
             'votes',
+            'comment_count',
+            'created_at',
+            'topic',
           );
+        }));
+    });
+    describe('Count', () => {
+      it('GET request returns 200 and repsonds with comment count that works sucesfully', () => request
+        .get('/api/articles')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.data[0].comment_count).to.eql('13');
+        }));
+    });
+    describe('Queries: Limit', () => {
+      it('GET request returns 200 and tests that the limit works succesfully', () => request
+        .get('/api/articles')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.data).to.have.length(10);
+        }));
+    });
+    describe('Queries: SortBy & SortAscending', () => {
+      it('GET request returns 200 and tests it comes back in descending order by default', () => request
+        .get('/api/articles?sort_criteria=article_id')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.data[0].article_id).to.eql(12);
+        }));
+      it('GET request returns 200 and tests it comes back in ascending order when the query is set to true', () => request
+        .get('/api/articles?sort_criteria=article_id&&sort_ascending=true')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.data[0].article_id).to.eql(1);
+        }));
+    });
+    describe('Queries: Page', () => {
+      it('GET request returns 200 and tests that the Page works succesfully as the second page only has 2 articles!', () => request
+        .get('/api/articles?sort_criteria=article_id&&page=1')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.data).to.have.length(2);
         }));
     });
   });

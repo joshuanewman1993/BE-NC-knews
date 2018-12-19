@@ -55,8 +55,9 @@ exports.getArticleByTopicId = (req, res, next) => {
 };
 
 exports.addArticleByTopicId = (req, res, next) => {
+  const newObj = { ...req.params, ...req.body };
   connection
-    .insert(req.body)
+    .insert(newObj)
     .into('articles')
     .returning('*')
     .then(([articleAdded]) => {
