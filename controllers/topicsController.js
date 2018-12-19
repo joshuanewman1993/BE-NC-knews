@@ -49,6 +49,7 @@ exports.getArticleByTopicId = (req, res, next) => {
       'comments.article_id',
     )
     .then((data) => {
+      if (data.length === 0) return Promise.reject({ status: 404, msg: 'topic not found!' });
       res.status(200).send({ data });
     })
     .catch(next);

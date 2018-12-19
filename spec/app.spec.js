@@ -12,7 +12,7 @@ describe('/api', () => {
   after(() => connection.destroy());
 
   describe('/topics', () => {
-    describe('GET /api/topics', () => {
+    describe('/api/topics', () => {
       it('GET request returns 200 and an array of topics with the correct properties', () => request
         .get('/api/topics')
         .expect(200)
@@ -27,37 +27,36 @@ describe('/api', () => {
           expect(topics).to.have.length(2);
         }));
     });
-    describe('POST /api/topics', () => {
-      it('POST request returns 201 and responds with the correct newly added topics data', () => {
-        const newTopic = {
-          description: 'The man, the josh, the hero',
-          slug: 'josh',
-        };
-        return request
-          .post('/api/topics')
-          .expect(201)
-          .send(newTopic)
-          .then(({ body }) => {
-            expect(body.topic).to.eql(newTopic);
-          });
-      });
-      it('POST request returns 201 and responds with the newly added topics data with the correct properties', () => {
-        const newTopic = {
-          description: 'The man, the josh, the hero',
-          slug: 'josh',
-        };
-        return request
-          .post('/api/topics')
-          .expect(201)
-          .send(newTopic)
-          .then(({ body }) => {
-            expect(body.topic).to.have.keys('description', 'slug');
-            expect(body.topic.description).to.eql('The man, the josh, the hero');
-            expect(body.topic.slug).to.eql('josh');
-          });
-      });
+    it('POST request returns 201 and responds with the correct newly added topics data', () => {
+      const newTopic = {
+        description: 'The man, the josh, the hero',
+        slug: 'josh',
+      };
+      return request
+        .post('/api/topics')
+        .expect(201)
+        .send(newTopic)
+        .then(({ body }) => {
+          expect(body.topic).to.eql(newTopic);
+        });
     });
-    describe('GET /api/topics/:topic/articles', () => {
+    it('POST request returns 201 and responds with the newly added topics data with the correct properties', () => {
+      const newTopic = {
+        description: 'The man, the josh, the hero',
+        slug: 'josh',
+      };
+      return request
+        .post('/api/topics')
+        .expect(201)
+        .send(newTopic)
+        .then(({ body }) => {
+          expect(body.topic).to.have.keys('description', 'slug');
+          expect(body.topic.description).to.eql('The man, the josh, the hero');
+          expect(body.topic.slug).to.eql('josh');
+        });
+    });
+
+    describe('/api/topics/:topic/articles', () => {
       it('GET request returns 200 and responds with the correct keys for the data sent back!', () => request
         .get('/api/topics/cats/articles')
         .expect(200)
@@ -80,6 +79,7 @@ describe('/api', () => {
           expect(body.data[0].article_id).to.eql(5);
           expect(body.data[0].votes).to.eql(0);
         }));
+
       describe('Parametic query', () => {
         it('GET request returns 200 and tests the req.parmas.topic is equal to the topic in the data sent back!', () => request
           .get('/api/topics/cats/articles')
@@ -127,7 +127,7 @@ describe('/api', () => {
           }));
       });
     });
-    describe('POST /api/topics/:topic/articles', () => {
+    describe('/api/topics/:topic/articles', () => {
       it('POST request returns 201 and responds with the correct newly added article data', () => {
         const newArticle = {
           title: 'Just another day at northcoders',
@@ -173,9 +173,29 @@ describe('/api', () => {
           });
       });
     });
+    describe('Error Handling : api/topics', () => {
+      it('POST status returns 400 - client has inputted incorrect data', () => {
+        const badData = {
+          animal: 'Fish',
+          Type: 'Smelly',
+        };
+        return request
+          .post('/api/topics')
+          .send(badData)
+          .expect(400);
+      });
+      it('PATCH status returns 405 - client not allowed to execute that method', () => request.patch('/api/topics').expect(405));
+      it('DELETE status returns 405 - client not allowed to execute that method', () => request.delete('/api/topics').expect(405));
+    });
+    describe('Error Handling : api/topics/:topic/aritcles', () => {
+      it('GET status returns 404 - client has inputted an incorrect parametic query', () => request.get('/api/topics/hdfhdsf/articles').expect(404));
+      it('GET status returns 400 - the sort criteria query is invalid', () => request.get('/api/topics/mitch/articles?sort_criteria=elf').expect(400));
+      it('PATCH status returns 405 - client not allowed to execute that method', () => request.patch('/api/topics/mitch/articles').expect(405));
+      it('DELETE status returns 405 - client not allowed to execute that method', () => request.delete('/api/topics/mitch/articles').expect(405));
+    });
   });
   describe('/articles', () => {
-    describe('GET /api/article', () => {
+    describe('/api/article', () => {
       it('GET request returns 200 and an array of articles with the correct properties', () => request
         .get('/api/articles')
         .expect(200)
@@ -186,6 +206,7 @@ describe('/api', () => {
             'title',
             'article_id',
             'votes',
+            'body',
             'comment_count',
             'created_at',
             'topic',
@@ -230,5 +251,65 @@ describe('/api', () => {
           expect(body.data).to.have.length(2);
         }));
     });
+    describe('Error Handling : api/articles', () => {
+      it('POST status returns 405 - client not allowed to execute that method', () => request.post('/api/articles').expect(405));
+      it('PATCH status returns 405 - client not allowed to execute that method', () => request.patch('/api/articles').expect(405));
+      it('DELETE status returns 405 - client not allowed to execute that method', () => request.delete('/api/articles').expect(405));
+    });
+  });
+  describe.only('/api/articles/:article_id', () => {
+    it('GET request returns 200 and an array of articles with the correct properties by a specfic article ID', () => request
+      .get('/api/articles/1')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data).to.be.an('array');
+        expect(body.data[0]).to.have.all.keys(
+          'author',
+          'title',
+          'article_id',
+          'votes',
+          'body',
+          'comment_count',
+          'created_at',
+          'topic',
+        );
+      }));
+    it('GET request returns 200 with the correct data', () => request
+      .get('/api/articles/2')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data[0].author).to.eql('icellusedkars');
+        expect(body.data[0].article_id).to.eql(2);
+        expect(body.data[0].topic).to.eql('mitch');
+      }));
+    it('PATCH request returns 200 and increments the VOTE property positively.', () => request
+      .patch('/api/articles/2')
+      .send({ inc_votes: 1 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.votes).to.eql(1);
+      }));
+    it('PATCH request returns 200 and increments the VOTE property negatively.', () => request
+      .patch('/api/articles/2')
+      .send({ inc_votes: -20 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.votes).to.eql(-20);
+      }));
+    it('DELETE request returns 200 and deletes the article succesfully by the article_id. It will send back an empty object the user', () => request
+      .delete('/api/articles/2')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).to.eql({});
+      }));
+  });
+
+  describe.only('Error Handling : api/aricles/:article_id', () => {
+    it('GET status returns 404 - client has inputted an incorrect parametic query (aritcle_id)', () => request.get('/api/articles/3222').expect(404));
+    it('PATCH status returns 400 - client has inputted incorrect data', () => request
+      .patch('/api/articles/2')
+      .send({ inc_votes: 'hello' })
+      .expect(400));
+    it('DELETE status returns 404 - client has inputted an incorrect parametic query (aritcle_id) to delete', () => request.delete('/api/articles/3222').expect(404));
   });
 });

@@ -6,9 +6,18 @@ const {
   addArticleByTopicId,
 } = require('../controllers/topicsController');
 
-topicsRouter.get('/', getTopics);
-topicsRouter.post('/', addTopic);
-topicsRouter.get('/:topic/articles', getArticleByTopicId);
-topicsRouter.post('/:topic/articles', addArticleByTopicId);
+const { handle405 } = require('../errors/index');
+
+topicsRouter
+  .route('/')
+  .get(getTopics)
+  .post(addTopic)
+  .all(handle405);
+
+topicsRouter
+  .route('/:topic/articles')
+  .get(getArticleByTopicId)
+  .post(addArticleByTopicId)
+  .all(handle405);
 
 module.exports = topicsRouter;
