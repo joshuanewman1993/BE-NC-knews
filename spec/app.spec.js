@@ -312,7 +312,7 @@ describe('/api', () => {
       .expect(400));
     it('DELETE status returns 404 - client has inputted an incorrect parametic query (aritcle_id) to delete', () => request.delete('/api/articles/3222').expect(404));
   });
-  describe.only('/api/articles/:article_id/comments', () => {
+  describe('/api/articles/:article_id/comments', () => {
     it('GET request returns 200 with the correct comments data by specific article_id and the object properties are correct.', () => request
       .get('/api/articles/9/comments')
       .expect(200)
@@ -333,6 +333,21 @@ describe('/api', () => {
         expect(body.data[0].votes).to.eql(16);
         expect(body.data[0].author).to.eql('butter_bridge');
       }));
+    it('POST request returns 201 and that the comment is added to that specific article_id', () => {
+      const newComment = {
+        body: 'This is a new body!!!',
+        username: 'butter_bridge',
+      };
+      return request
+        .post('/api/articles/9/comments')
+        .expect(201)
+        .send(newComment)
+        .then(({ body }) => {
+          expect(body.commentAdded.username).to.eql('butter_bridge');
+          expect(body.commentAdded.body).to.eql('This is a new body!!!');
+        });
+    });
+
     describe('Queries: Limit', () => {
       it('GET request returns 200 and limits the number of the page to one as set in the query', () => request
         .get('/api/articles/9/comments?limit=1')
@@ -364,5 +379,15 @@ describe('/api', () => {
   });
   describe('Error Handling : api/aricles/:article_id/comments', () => {
     it('GET status returns 404 - client has inputted an incorrect parametic query (aritcle_id)', () => request.get('/api/articles/3222').expect(404));
+    it('POST status returns 400 - client has inputted incorrect comments data', () => {
+      const badData = {
+        animal: 'Fish',
+        Type: 'Smelly',
+      };
+      return request
+        .post('/api/articles/2/comments')
+        .send(badData)
+        .expect(400);
+    });
   });
 });

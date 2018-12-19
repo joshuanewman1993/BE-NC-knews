@@ -123,3 +123,26 @@ exports.getCommentsByArticleId = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.postCommentByArticle = (req, res, next) => {
+  const newObj = { ...req.params, ...req.body };
+  connection
+    .insert(newObj)
+    .into('comments')
+    .returning('*')
+    .then(([commentAdded]) => {
+      res.status(201).send({ commentAdded });
+    })
+    .catch(next);
+};
+
+// exports.exports.updateByCommentId = (req, res, next) => {
+//   connection('comments')
+//     .where('comments_id', '=', req.params.comment_id)
+//     .increment('votes', req.body.inc_votes)
+//     .returning('*')
+//     .then(([updatedData]) => {
+//       res.status(200).send(updatedData);
+//     })
+//     .catch(next);
+// };
