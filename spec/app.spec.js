@@ -189,7 +189,7 @@ describe('/api', () => {
     });
     describe('Error Handling : api/topics/:topic/aritcles', () => {
       it('GET status returns 404 - client has inputted an incorrect parametic query', () => request.get('/api/topics/hdfhdsf/articles').expect(404));
-      it('GET status returns 400 - the sort criteria query is invalid', () => request.get('/api/topics/mitch/articles?sort_criteria=elf').expect(400));
+      it('GET status returns 400 - the sort criteria query is invalid', () => request.get('/api/topics/mitch/articles?sort_by=elf').expect(400));
       it('PATCH status returns 405 - client not allowed to execute that method', () => request.patch('/api/topics/mitch/articles').expect(405));
       it('DELETE status returns 405 - client not allowed to execute that method', () => request.delete('/api/topics/mitch/articles').expect(405));
     });
@@ -231,13 +231,13 @@ describe('/api', () => {
     });
     describe('Queries: SortBy & SortAscending', () => {
       it('GET request returns 200 and tests it comes back in descending order by default', () => request
-        .get('/api/articles?sort_criteria=article_id')
+        .get('/api/articles?sort_by=article_id')
         .expect(200)
         .then(({ body }) => {
           expect(body.data[0].article_id).to.eql(12);
         }));
       it('GET request returns 200 and tests it comes back in ascending order when the query is set to true', () => request
-        .get('/api/articles?sort_criteria=article_id&&sort_ascending=true')
+        .get('/api/articles?sort_by=article_id&&sort_ascending=true')
         .expect(200)
         .then(({ body }) => {
           expect(body.data[0].article_id).to.eql(1);
@@ -245,7 +245,7 @@ describe('/api', () => {
     });
     describe('Queries: Page', () => {
       it('GET request returns 200 and tests that the Page works succesfully as the second page only has 2 articles!', () => request
-        .get('/api/articles?sort_criteria=article_id&&page=1')
+        .get('/api/articles?sort_by=article_id&&page=1')
         .expect(200)
         .then(({ body }) => {
           expect(body.data).to.have.length(2);
@@ -391,7 +391,7 @@ describe('/api', () => {
         expect(body.data[0].comment_id).to.eql(17);
       }));
     it('GET request returns 200 and tests that the data gets sorted by votes in descending order by default', () => request
-      .get('/api/articles/1/comments?sort_criteria=votes')
+      .get('/api/articles/1/comments?sort_by=votes')
       .expect(200)
       .then(({ body }) => {
         expect(body.data[0].votes).to.eql(100);

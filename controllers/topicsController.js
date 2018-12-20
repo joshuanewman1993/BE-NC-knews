@@ -21,7 +21,7 @@ exports.addTopic = (req, res, next) => {
 
 exports.getArticleByTopicId = (req, res, next) => {
   const {
-    limit = 10, sort_criteria = 'created_at', sort_ascending = false, page = 0,
+    limit = 10, sort_by = 'created_at', sort_ascending = false, page = 0,
   } = req.query;
   connection
     .select(
@@ -38,7 +38,7 @@ exports.getArticleByTopicId = (req, res, next) => {
     .where('topic', '=', req.params.topic)
     .limit(limit)
     .offset(limit * page)
-    .orderBy(`${sort_criteria}`, sort_ascending ? 'asc' : 'desc')
+    .orderBy(`${sort_by}`, sort_ascending ? 'asc' : 'desc')
     .groupBy(
       'articles.username',
       'articles.title',

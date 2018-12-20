@@ -2,7 +2,7 @@ const connection = require('../db/connection');
 
 exports.getArticles = (req, res, next) => {
   const {
-    limit = 10, sort_criteria = 'created_at', sort_ascending = false, page = 0,
+    limit = 10, sort_by = 'created_at', sort_ascending = false, page = 0,
   } = req.query;
   connection
     .select(
@@ -19,7 +19,7 @@ exports.getArticles = (req, res, next) => {
     .count('comments.article_id AS comment_count')
     .limit(limit)
     .offset(limit * page)
-    .orderBy(`articles.${sort_criteria}`, sort_ascending ? 'asc' : 'desc')
+    .orderBy(`articles.${sort_by}`, sort_ascending ? 'asc' : 'desc')
     .groupBy(
       'articles.username',
       'articles.title',
@@ -38,7 +38,7 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticleById = (req, res, next) => {
   const {
-    limit = 10, sort_criteria = 'created_at', sort_ascending = false, page = 0,
+    limit = 10, sort_by = 'created_at', sort_ascending = false, page = 0,
   } = req.query;
   connection
     .select(
@@ -56,7 +56,7 @@ exports.getArticleById = (req, res, next) => {
     .where('articles.article_id', '=', req.params.article_id)
     .limit(limit)
     .offset(limit * page)
-    .orderBy(`articles.${sort_criteria}`, sort_ascending ? 'asc' : 'desc')
+    .orderBy(`articles.${sort_by}`, sort_ascending ? 'asc' : 'desc')
     .groupBy(
       'articles.username',
       'articles.title',
@@ -101,7 +101,7 @@ exports.deleteArticle = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const {
-    limit = 10, sort_criteria = 'created_at', sort_ascending = false, page = 0,
+    limit = 10, sort_by = 'created_at', sort_ascending = false, page = 0,
   } = req.query;
   connection
     .select(
@@ -116,7 +116,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
     .where('articles.article_id', '=', req.params.article_id)
     .limit(limit)
     .offset(limit * page)
-    .orderBy(`${sort_criteria}`, sort_ascending ? 'asc' : 'desc')
+    .orderBy(`${sort_by}`, sort_ascending ? 'asc' : 'desc')
     .then((data) => {
       if (!data) return Promise.reject({ status: 404, msg: 'article not found' });
       res.status(200).send({ data });
