@@ -1,0 +1,45 @@
+[
+	{
+		"Route": "/api/topics",
+		"Description": "Responds with an array of topic objects",
+		"Methods Available": "GET, POST"
+	},
+	{
+		"Route": "/api/topics/:topic/articles",
+		"Description": "Responds with an array of article objects for a given topic",
+		"Methods Available": "GET, POST",
+		"Queries": "limit, sort_by, page, sort_ascending"
+	},
+	{
+		"Route": "/api/articles",
+		"Description": "Responds with an array of article objects",
+		"Methods Available": "GET",
+		"Queries": "limit, sort_by, page, sort_ascending"
+	},
+	{
+		"Route": "/api/articles/:article_id",
+		"Description": "Responds with an article object by specifc article_id",
+		"Methods Available": "GET, PATCH, DELETE",
+		"Queries": "limit, sort_by, page, sort_ascending"
+	},
+	{
+		"Route": "/api/articles/:article_id/comments",
+		"Description": "Responds with an array of comments for the given article_id",
+		"Methods Available": "GET, POST",
+		"Queries": "limit, sort_by, page, sort_ascending"
+	},
+	{
+		"Route": "/api/articles/:article_id/comments/:comment_id",
+		"Methods Available": "PATCH, DELETE"
+	},
+	{
+		"Route": "/api/users",
+		"Description": "Responds with an array of user objects",
+		"Methods Available": "GET"
+	},
+	{
+		"Route": "/api/users/:username",
+		"Description": "Responds with an array of user objects for a given username",
+		"Methods Available": "GET"
+	}
+]

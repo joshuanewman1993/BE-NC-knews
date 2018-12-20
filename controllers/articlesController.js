@@ -67,8 +67,8 @@ exports.getArticleById = (req, res, next) => {
       'articles.body',
       'comments.article_id',
     )
-    .then((data) => {
-      if (data.length === 0) return Promise.reject({ status: 404, msg: 'article not found! Please try another.' });
+    .then(([data]) => {
+      if (!data) return Promise.reject({ status: 404, msg: 'article not found! Please try another.' });
       res.status(200).send({ data });
     })
     .catch(next);
@@ -94,7 +94,7 @@ exports.deleteArticle = (req, res, next) => {
     .del()
     .then((article) => {
       if (!article) return Promise.reject({ status: 404, msg: 'article not found' });
-      res.status(200).send({});
+      res.status(204).send({});
     })
     .catch(next);
 };
@@ -155,7 +155,7 @@ exports.deleteCommentById = (req, res, next) => {
     .del()
     .then((article) => {
       if (!article) return Promise.reject({ status: 404, msg: 'comment not found' });
-      res.status(200).send({});
+      res.status(204).send({});
     })
     .catch(next);
 };

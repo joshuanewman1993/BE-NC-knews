@@ -262,8 +262,8 @@ describe('/api', () => {
       .get('/api/articles/1')
       .expect(200)
       .then(({ body }) => {
-        expect(body.data).to.be.an('array');
-        expect(body.data[0]).to.have.all.keys(
+        expect(body.data).to.be.an('object');
+        expect(body.data).to.have.all.keys(
           'author',
           'title',
           'article_id',
@@ -278,9 +278,9 @@ describe('/api', () => {
       .get('/api/articles/2')
       .expect(200)
       .then(({ body }) => {
-        expect(body.data[0].author).to.eql('icellusedkars');
-        expect(body.data[0].article_id).to.eql(2);
-        expect(body.data[0].topic).to.eql('mitch');
+        expect(body.data.author).to.eql('icellusedkars');
+        expect(body.data.article_id).to.eql(2);
+        expect(body.data.topic).to.eql('mitch');
       }));
     it('PATCH request returns 200 and increments the VOTE property positively.', () => request
       .patch('/api/articles/2')
@@ -296,15 +296,15 @@ describe('/api', () => {
       .then(({ body }) => {
         expect(body.votes).to.eql(-20);
       }));
-    it('DELETE request returns 200 and deletes the article succesfully by the article_id. It will send back an empty object the user', () => request
+    it('DELETE request returns 204 and deletes the article succesfully by the article_id. It will send back an empty object the user', () => request
       .delete('/api/articles/2')
-      .expect(200)
+      .expect(204)
       .then(({ body }) => {
         expect(body).to.eql({});
       }));
   });
 
-  describe('Error Handling : api/aricles/:article_id', () => {
+  describe('Error Handling : api/articles/:article_id', () => {
     it('GET status returns 404 - client has inputted an incorrect parametic query (aritcle_id)', () => request.get('/api/articles/3222').expect(404));
     it('PATCH status returns 400 - client has inputted incorrect data', () => request
       .patch('/api/articles/2')
@@ -363,7 +363,7 @@ describe('/api', () => {
       }));
     it('DELETE request returns 200 and deletes the comment succesfully by the comment_id. It will send back an empty object the user', () => request
       .delete('/api/articles/2/comments/2')
-      .expect(200)
+      .expect(204)
       .then(({ body }) => {
         expect(body).to.eql({});
       }));
@@ -435,7 +435,7 @@ describe('/api', () => {
           expect(body[0].name).to.eql('jonny');
         }));
     });
-    describe.only('Error Handling: api/users', () => {
+    describe('Error Handling: api/users', () => {
       it('PATCH status returns 405 - client not allowed to execute that method', () => request.patch('/api/users').expect(405));
       it('DELETE status returns 405 - client not allowed to execute that method', () => request.delete('/api/users').expect(405));
       it('POST status returns 405 - client not allowed to execute that method', () => request.post('/api/users').expect(405));
@@ -459,7 +459,7 @@ describe('/api', () => {
         expect(body.name).to.eql('paul');
       }));
   });
-  describe.only('Error Handling: api/users/:username', () => {
+  describe('Error Handling: api/users/:username', () => {
     it('GET status returns 404 - client has inputted an incorrect parametic query (username)', () => request.get('/api/users/jdhnshssss').expect(404));
     it('PATCH status returns 405 - client not allowed to execute that method', () => request.patch('/api/users/rogersop').expect(405));
     it('DELETE status returns 405 - client not allowed to execute that method', () => request.delete('/api/users/rogersop').expect(405));
