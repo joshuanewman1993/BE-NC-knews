@@ -136,13 +136,26 @@ exports.postCommentByArticle = (req, res, next) => {
     .catch(next);
 };
 
-// exports.exports.updateByCommentId = (req, res, next) => {
-//   connection('comments')
-//     .where('comments_id', '=', req.params.comment_id)
-//     .increment('votes', req.body.inc_votes)
-//     .returning('*')
-//     .then(([updatedData]) => {
-//       res.status(200).send(updatedData);
-//     })
-//     .catch(next);
-// };
+exports.updateByCommentId = (req, res, next) => {
+  const isValidIncrement = typeof req.body.inc_votes !== 'number';
+  if (isValidIncrement) return next({ status: 400, msg: 'incorrect input' });
+  connection('comments')
+    .where('comment_id', '=', req.params.comment_id)
+    .increment('votes', req.body.inc_votes)
+    .returning('*')
+    .then(([updatedData]) => {
+      res.status(200).send(updatedData);
+    })
+    .catch(next);
+};
+
+exports.deleteCommentById = (req, res, next) => {
+  connection('comments')
+    .where('comment_id', '=', req.params.comment_id)
+    .del()
+    .then((article) => {
+      if (!article) return Promise.reject({ status: 404, msg: 'comment not found' });
+      res.status(200).send({});
+    })
+    .catch(next);
+};

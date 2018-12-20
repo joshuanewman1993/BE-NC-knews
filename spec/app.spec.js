@@ -347,36 +347,57 @@ describe('/api', () => {
           expect(body.commentAdded.body).to.eql('This is a new body!!!');
         });
     });
-
-    describe('Queries: Limit', () => {
-      it('GET request returns 200 and limits the number of the page to one as set in the query', () => request
-        .get('/api/articles/9/comments?limit=1')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.data).to.have.length(1);
-        }));
-    });
-    describe('Queries: SortBy & SortAscending', () => {
-      it('GET request returns 200 and tests that the data comes back in descending order by default', () => request
-        .get('/api/articles/9/comments')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.data[0].comment_id).to.eql(1);
-        }));
-      it('GET request returns 200 and tests that the data comes back in descending order by default', () => request
-        .get('/api/articles/9/comments?sort_ascending=true')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.data[0].comment_id).to.eql(17);
-        }));
-      it('GET request returns 200 and tests that the data gets sorted by votes in descending order by default', () => request
-        .get('/api/articles/1/comments?sort_criteria=votes')
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.data[0].votes).to.eql(100);
-        }));
-    });
+    it('PATCH request returns 200 and increments the VOTE property on the comments table positively.', () => request
+      .patch('/api/articles/2/comments/2')
+      .send({ inc_votes: 5 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.votes).to.eql(19);
+      }));
+    it('PATCH request returns 200 and increments the VOTE property on the comments table negatively.', () => request
+      .patch('/api/articles/2/comments/2')
+      .send({ inc_votes: -2 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.votes).to.eql(12);
+      }));
+    it('DELETE request returns 200 and deletes the comment succesfully by the comment_id. It will send back an empty object the user', () => request
+      .delete('/api/articles/2/comments/2')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).to.eql({});
+      }));
   });
+
+  describe('Queries: Limit', () => {
+    it('GET request returns 200 and limits the number of the page to one as set in the query', () => request
+      .get('/api/articles/9/comments?limit=1')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data).to.have.length(1);
+      }));
+  });
+  describe('Queries: SortBy & SortAscending', () => {
+    it('GET request returns 200 and tests that the data comes back in descending order by default', () => request
+      .get('/api/articles/9/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data[0].comment_id).to.eql(1);
+      }));
+    it('GET request returns 200 and tests that the data comes back in descending order by default', () => request
+      .get('/api/articles/9/comments?sort_ascending=true')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data[0].comment_id).to.eql(17);
+      }));
+    it('GET request returns 200 and tests that the data gets sorted by votes in descending order by default', () => request
+      .get('/api/articles/1/comments?sort_criteria=votes')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data[0].votes).to.eql(100);
+      }));
+  });
+
   describe('Error Handling : api/aricles/:article_id/comments', () => {
     it('GET status returns 404 - client has inputted an incorrect parametic query (aritcle_id)', () => request.get('/api/articles/3222').expect(404));
     it('POST status returns 400 - client has inputted incorrect comments data', () => {
@@ -389,5 +410,59 @@ describe('/api', () => {
         .send(badData)
         .expect(400);
     });
+    it('PATCH status returns 400 - client has inputted incorrect data', () => request
+      .patch('/api/articles/2/comments/2')
+      .send({ inc_votes: 'hello' })
+      .expect(400));
+    it('DELETE status returns 404 - client has inputted an incorrect parametic query (comment_id) to delete', () => request.delete('/api/articles/2/comments/3543222').expect(404));
+  });
+  describe('/users', () => {
+    describe('/api/users', () => {
+      it('GET request returns status code 200 returns an array of users objects with the correct properties', () => request
+        .get('/api/users')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).to.be.an('array');
+          expect(body[0]).to.have.all.keys('username', 'avatar_url', 'name');
+        }));
+      it('GET request returns status code 200 returns the users object with the correct data', () => request
+        .get('/api/users')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body[0].username).to.eql('butter_bridge');
+          expect(body[0].avatar_url).to.eq;
+          ('https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg');
+          expect(body[0].name).to.eql('jonny');
+        }));
+    });
+    describe.only('Error Handling: api/users', () => {
+      it('PATCH status returns 405 - client not allowed to execute that method', () => request.patch('/api/users').expect(405));
+      it('DELETE status returns 405 - client not allowed to execute that method', () => request.delete('/api/users').expect(405));
+      it('POST status returns 405 - client not allowed to execute that method', () => request.post('/api/users').expect(405));
+    });
+  });
+  describe('/api/users/username', () => {
+    it('GET request returns status code 200 returns an array of users objects with the correct properties', () => request
+      .get('/api/users/rogersop')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).to.be.an('object');
+        expect(body).to.have.all.keys('username', 'avatar_url', 'name');
+      }));
+    it('GET request returns status code 200 returns the users object with the correct data', () => request
+      .get('/api/users/rogersop')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.username).to.eql('rogersop');
+        expect(body.avatar_url).to.eq;
+        ('https://avatars2.githubusercontent.com/u/24394918?s=400&v=4');
+        expect(body.name).to.eql('paul');
+      }));
+  });
+  describe.only('Error Handling: api/users/:username', () => {
+    it('GET status returns 404 - client has inputted an incorrect parametic query (username)', () => request.get('/api/users/jdhnshssss').expect(404));
+    it('PATCH status returns 405 - client not allowed to execute that method', () => request.patch('/api/users/rogersop').expect(405));
+    it('DELETE status returns 405 - client not allowed to execute that method', () => request.delete('/api/users/rogersop').expect(405));
+    it('POST status returns 405 - client not allowed to execute that method', () => request.post('/api/users/rogersop').expect(405));
   });
 });
