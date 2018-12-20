@@ -4,11 +4,14 @@ const {
   getArticleById,
   updateArticle,
   deleteArticle,
+} = require('../controllers/articlesController');
+const {
   getCommentsByArticleId,
   postCommentByArticle,
   updateByCommentId,
   deleteCommentById,
-} = require('../controllers/articlesController');
+} = require('../controllers/commentsController');
+
 const { handle405 } = require('../errors/index');
 
 articlesRouter
