@@ -61,7 +61,7 @@ describe('/api', () => {
         .get('/api/topics/cats/articles')
         .expect(200)
         .then(({ body }) => {
-          expect(body.data[0]).to.have.all.keys(
+          expect(body.article[0]).to.have.all.keys(
             'author',
             'title',
             'article_id',
@@ -75,9 +75,9 @@ describe('/api', () => {
         .get('/api/topics/cats/articles')
         .expect(200)
         .then(({ body }) => {
-          expect(body.data[0].author).to.eql('rogersop');
-          expect(body.data[0].article_id).to.eql(5);
-          expect(body.data[0].votes).to.eql(0);
+          expect(body.article[0].author).to.eql('rogersop');
+          expect(body.article[0].article_id).to.eql(5);
+          expect(body.article[0].votes).to.eql(0);
         }));
 
       describe('Parametic query', () => {
@@ -85,7 +85,7 @@ describe('/api', () => {
           .get('/api/topics/cats/articles')
           .expect(200)
           .then(({ body }) => {
-            expect(body.data[0].topic).to.eql('cats');
+            expect(body.article[0].topic).to.eql('cats');
           }));
       });
       describe('Count', () => {
@@ -93,7 +93,7 @@ describe('/api', () => {
           .get('/api/topics/cats/articles')
           .expect(200)
           .then(({ body }) => {
-            expect(body.data[0].comment_count).to.eql('2');
+            expect(body.article[0].comment_count).to.eql('2');
           }));
       });
       describe('Queries: Limit', () => {
@@ -101,7 +101,7 @@ describe('/api', () => {
           .get('/api/topics/mitch/articles?limit=3')
           .expect(200)
           .then(({ body }) => {
-            expect(body.data).to.have.length(3);
+            expect(body.article).to.have.length(3);
           }));
       });
       describe('Queries: SortBy & SortAscdending', () => {
@@ -109,13 +109,13 @@ describe('/api', () => {
           .get('/api/topics/mitch/articles?sort_ascending=true')
           .expect(200)
           .then(({ body }) => {
-            expect(body.data[0].title).to.eql('Moustache');
+            expect(body.article[0].title).to.eql('Moustache');
           }));
         it('GET request returns 200 and tests that it comes back in descedning order as default', () => request
           .get('/api/topics/mitch/articles')
           .expect(200)
           .then(({ body }) => {
-            expect(body.data[0].title).to.eql('Living in the shadow of a great man');
+            expect(body.article[0].title).to.eql('Living in the shadow of a great man');
           }));
       });
       describe('Queries: Page', () => {
@@ -123,7 +123,7 @@ describe('/api', () => {
           .get('/api/topics/mitch/articles?page=1')
           .expect(200)
           .then(({ body }) => {
-            expect(body.data).to.have.length(1);
+            expect(body.article).to.have.length(1);
           }));
       });
     });
@@ -200,8 +200,8 @@ describe('/api', () => {
         .get('/api/articles')
         .expect(200)
         .then(({ body }) => {
-          expect(body.data).to.be.an('array');
-          expect(body.data[0]).to.have.all.keys(
+          expect(body.articles).to.be.an('array');
+          expect(body.articles[0]).to.have.all.keys(
             'author',
             'title',
             'article_id',
@@ -218,7 +218,7 @@ describe('/api', () => {
         .get('/api/articles')
         .expect(200)
         .then(({ body }) => {
-          expect(body.data[0].comment_count).to.eql('13');
+          expect(body.articles[0].comment_count).to.eql('13');
         }));
     });
     describe('Queries: Limit', () => {
@@ -226,7 +226,7 @@ describe('/api', () => {
         .get('/api/articles')
         .expect(200)
         .then(({ body }) => {
-          expect(body.data).to.have.length(10);
+          expect(body.articles).to.have.length(10);
         }));
     });
     describe('Queries: SortBy & SortAscending', () => {
@@ -234,13 +234,13 @@ describe('/api', () => {
         .get('/api/articles?sort_by=article_id')
         .expect(200)
         .then(({ body }) => {
-          expect(body.data[0].article_id).to.eql(12);
+          expect(body.articles[0].article_id).to.eql(12);
         }));
       it('GET request returns 200 and tests it comes back in ascending order when the query is set to true', () => request
         .get('/api/articles?sort_by=article_id&&sort_ascending=true')
         .expect(200)
         .then(({ body }) => {
-          expect(body.data[0].article_id).to.eql(1);
+          expect(body.articles[0].article_id).to.eql(1);
         }));
     });
     describe('Queries: Page', () => {
@@ -248,7 +248,7 @@ describe('/api', () => {
         .get('/api/articles?sort_by=article_id&&page=1')
         .expect(200)
         .then(({ body }) => {
-          expect(body.data).to.have.length(2);
+          expect(body.articles).to.have.length(2);
         }));
     });
     describe('Error Handling : api/articles', () => {
@@ -262,8 +262,8 @@ describe('/api', () => {
       .get('/api/articles/1')
       .expect(200)
       .then(({ body }) => {
-        expect(body.data).to.be.an('object');
-        expect(body.data).to.have.all.keys(
+        expect(body.articles).to.be.an('object');
+        expect(body.articles).to.have.all.keys(
           'author',
           'title',
           'article_id',
@@ -278,9 +278,9 @@ describe('/api', () => {
       .get('/api/articles/2')
       .expect(200)
       .then(({ body }) => {
-        expect(body.data.author).to.eql('icellusedkars');
-        expect(body.data.article_id).to.eql(2);
-        expect(body.data.topic).to.eql('mitch');
+        expect(body.articles.author).to.eql('icellusedkars');
+        expect(body.articles.article_id).to.eql(2);
+        expect(body.articles.topic).to.eql('mitch');
       }));
     it('PATCH request returns 200 and increments the VOTE property positively.', () => request
       .patch('/api/articles/2')
@@ -317,7 +317,7 @@ describe('/api', () => {
       .get('/api/articles/9/comments')
       .expect(200)
       .then(({ body }) => {
-        expect(body.data[0]).to.have.all.keys(
+        expect(body.comments[0]).to.have.all.keys(
           'comment_id',
           'votes',
           'created_at',
@@ -329,9 +329,9 @@ describe('/api', () => {
       .get('/api/articles/9/comments')
       .expect(200)
       .then(({ body }) => {
-        expect(body.data[0].comment_id).to.eql(1);
-        expect(body.data[0].votes).to.eql(16);
-        expect(body.data[0].author).to.eql('butter_bridge');
+        expect(body.comments[0].comment_id).to.eql(1);
+        expect(body.comments[0].votes).to.eql(16);
+        expect(body.comments[0].author).to.eql('butter_bridge');
       }));
     it('POST request returns 201 and that the comment is added to that specific article_id', () => {
       const newComment = {
@@ -374,7 +374,7 @@ describe('/api', () => {
       .get('/api/articles/9/comments?limit=1')
       .expect(200)
       .then(({ body }) => {
-        expect(body.data).to.have.length(1);
+        expect(body.comments).to.have.length(1);
       }));
   });
   describe('Queries: SortBy & SortAscending', () => {
@@ -382,19 +382,19 @@ describe('/api', () => {
       .get('/api/articles/9/comments')
       .expect(200)
       .then(({ body }) => {
-        expect(body.data[0].comment_id).to.eql(1);
+        expect(body.comments[0].comment_id).to.eql(1);
       }));
     it('GET request returns 200 and tests that the data comes back in descending order by default', () => request
       .get('/api/articles/9/comments?sort_ascending=true')
       .expect(200)
       .then(({ body }) => {
-        expect(body.data[0].comment_id).to.eql(17);
+        expect(body.comments[0].comment_id).to.eql(17);
       }));
     it('GET request returns 200 and tests that the data gets sorted by votes in descending order by default', () => request
       .get('/api/articles/1/comments?sort_by=votes')
       .expect(200)
       .then(({ body }) => {
-        expect(body.data[0].votes).to.eql(100);
+        expect(body.comments[0].votes).to.eql(100);
       }));
   });
 

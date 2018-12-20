@@ -30,8 +30,8 @@ exports.getArticles = (req, res, next) => {
       'articles.body',
       'comments.article_id',
     )
-    .then((data) => {
-      res.status(200).send({ data });
+    .then((articles) => {
+      res.status(200).send({ articles });
     })
     .catch(next);
 };
@@ -67,9 +67,9 @@ exports.getArticleById = (req, res, next) => {
       'articles.body',
       'comments.article_id',
     )
-    .then(([data]) => {
-      if (!data) return Promise.reject({ status: 404, msg: 'article not found! Please try another.' });
-      res.status(200).send({ data });
+    .then(([articles]) => {
+      if (!articles) return Promise.reject({ status: 404, msg: 'article not found! Please try another.' });
+      res.status(200).send({ articles });
     })
     .catch(next);
 };
@@ -82,8 +82,8 @@ exports.updateArticle = (req, res, next) => {
     .where('article_id', '=', req.params.article_id)
     .increment('votes', req.body.inc_votes)
     .returning('*')
-    .then(([updatedData]) => {
-      res.status(200).send(updatedData);
+    .then(([updatedArticle]) => {
+      res.status(200).send(updatedArticle);
     })
     .catch(next);
 };
@@ -92,8 +92,8 @@ exports.deleteArticle = (req, res, next) => {
   connection('articles')
     .where('article_id', '=', req.params.article_id)
     .del()
-    .then((article) => {
-      if (!article) return Promise.reject({ status: 404, msg: 'article not found' });
+    .then((deletedArticle) => {
+      if (!deletedArticle) return Promise.reject({ status: 404, msg: 'article not found' });
       res.status(204).send({});
     })
     .catch(next);
@@ -117,9 +117,9 @@ exports.getCommentsByArticleId = (req, res, next) => {
     .limit(limit)
     .offset(limit * page)
     .orderBy(`${sort_by}`, sort_ascending ? 'asc' : 'desc')
-    .then((data) => {
-      if (!data) return Promise.reject({ status: 404, msg: 'article not found' });
-      res.status(200).send({ data });
+    .then((comments) => {
+      if (!comments) return Promise.reject({ status: 404, msg: 'article not found' });
+      res.status(200).send({ comments });
     })
     .catch(next);
 };
@@ -143,8 +143,8 @@ exports.updateByCommentId = (req, res, next) => {
     .where('comment_id', '=', req.params.comment_id)
     .increment('votes', req.body.inc_votes)
     .returning('*')
-    .then(([updatedData]) => {
-      res.status(200).send(updatedData);
+    .then(([comment]) => {
+      res.status(200).send(comment);
     })
     .catch(next);
 };
@@ -153,8 +153,8 @@ exports.deleteCommentById = (req, res, next) => {
   connection('comments')
     .where('comment_id', '=', req.params.comment_id)
     .del()
-    .then((article) => {
-      if (!article) return Promise.reject({ status: 404, msg: 'comment not found' });
+    .then((comment) => {
+      if (!comment) return Promise.reject({ status: 404, msg: 'comment not found' });
       res.status(204).send({});
     })
     .catch(next);
