@@ -21,7 +21,7 @@ exports.addTopic = (req, res, next) => {
 
 exports.getArticleByTopicId = (req, res, next) => {
   const {
-    limit = 10, sort_by = 'created_at', sort_ascending = false, page = 0,
+    limit = 10, sort_by = 'created_at', sort_ascending = false, page = 1,
   } = req.query;
   connection
     .select(
@@ -37,7 +37,7 @@ exports.getArticleByTopicId = (req, res, next) => {
     .count('comments.article_id AS comment_count')
     .where('topic', '=', req.params.topic)
     .limit(limit)
-    .offset(limit * page)
+    .offset(page * limit - limit)
     .orderBy(`${sort_by}`, sort_ascending ? 'asc' : 'desc')
     .groupBy(
       'articles.username',
@@ -57,6 +57,7 @@ exports.getArticleByTopicId = (req, res, next) => {
 
 exports.addArticleByTopicId = (req, res, next) => {
   const newObj = { ...req.params, ...req.body };
+
   connection
     .insert(newObj)
     .into('articles')

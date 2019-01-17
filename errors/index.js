@@ -1,5 +1,5 @@
 exports.handle404 = (err, req, res, next) => {
-  //   console.log(err, 'err');
+  console.log(err, 'err');
   if (err.status === 404) res.status(404).send({ msg: err.msg });
   else next(err);
 };
@@ -10,6 +10,14 @@ exports.handle400 = (err, req, res, next) => {
     42703: 'column does not exist',
   };
   if (codes[err.code]) res.status(400).send({ msg: codes[err.code] });
+  else next(err);
+};
+
+exports.handle422 = (err, req, res, next) => {
+  const codes = {
+    23505: 'duplicate key value violates unique constraint',
+  };
+  if (codes[err.code]) res.status(422).send({ msg: codes[err.code] });
   else next(err);
 };
 

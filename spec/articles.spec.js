@@ -15,7 +15,6 @@ module.exports = () => {
             'title',
             'article_id',
             'votes',
-            'body',
             'comment_count',
             'created_at',
             'topic',
@@ -57,7 +56,7 @@ module.exports = () => {
         .get('/api/articles?sort_by=article_id&&page=1')
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles).to.have.length(2);
+          expect(body.articles).to.have.length(10);
         }));
     });
     describe('Error Handling : api/articles', () => {
@@ -125,7 +124,7 @@ module.exports = () => {
         .get('/api/articles/9/comments')
         .expect(200)
         .then(({ body }) => {
-          expect(body.comments[0]).to.have.all.keys(
+          expect(body.comments).to.have.all.keys(
             'comment_id',
             'votes',
             'created_at',
@@ -137,9 +136,9 @@ module.exports = () => {
         .get('/api/articles/9/comments')
         .expect(200)
         .then(({ body }) => {
-          expect(body.comments[0].comment_id).to.eql(1);
-          expect(body.comments[0].votes).to.eql(16);
-          expect(body.comments[0].author).to.eql('butter_bridge');
+          expect(body.comments.comment_id).to.eql(1);
+          expect(body.comments.votes).to.eql(16);
+          expect(body.comments.author).to.eql('butter_bridge');
         }));
       it('POST request returns 201 and that the comment is added to that specific article_id', () => {
         const newComment = {
@@ -151,8 +150,8 @@ module.exports = () => {
           .expect(201)
           .send(newComment)
           .then(({ body }) => {
-            expect(body.commentAdded.username).to.eql('butter_bridge');
-            expect(body.commentAdded.body).to.eql('This is a new body!!!');
+            expect(body.comment.username).to.eql('butter_bridge');
+            expect(body.comment.body).to.eql('This is a new body!!!');
           });
       });
       it('PATCH request returns 200 and increments the VOTE property on the comments table positively.', () => request
@@ -160,14 +159,14 @@ module.exports = () => {
         .send({ inc_votes: 5 })
         .expect(200)
         .then(({ body }) => {
-          expect(body.votes).to.eql(19);
+          expect(body.comment.votes).to.eql(19);
         }));
       it('PATCH request returns 200 and increments the VOTE property on the comments table negatively.', () => request
         .patch('/api/articles/2/comments/2')
         .send({ inc_votes: -2 })
         .expect(200)
         .then(({ body }) => {
-          expect(body.votes).to.eql(12);
+          expect(body.comment.votes).to.eql(12);
         }));
       it('DELETE request returns 200 and deletes the comment succesfully by the comment_id. It will send back an empty object the user', () => request
         .delete('/api/articles/2/comments/2')
@@ -182,7 +181,7 @@ module.exports = () => {
         .get('/api/articles/9/comments?limit=1')
         .expect(200)
         .then(({ body }) => {
-          expect(body.comments).to.have.length(1);
+          expect(body.comments.comment_id).to.eql(1);
         }));
     });
     describe('Queries: SortBy & SortAscending', () => {
@@ -190,19 +189,19 @@ module.exports = () => {
         .get('/api/articles/9/comments')
         .expect(200)
         .then(({ body }) => {
-          expect(body.comments[0].comment_id).to.eql(1);
+          expect(body.comments.comment_id).to.eql(1);
         }));
       it('GET request returns 200 and tests that the data comes back in descending order by default', () => request
         .get('/api/articles/9/comments?sort_ascending=true')
         .expect(200)
         .then(({ body }) => {
-          expect(body.comments[0].comment_id).to.eql(17);
+          expect(body.comments.comment_id).to.eql(17);
         }));
       it('GET request returns 200 and tests that the data gets sorted by votes in descending order by default', () => request
         .get('/api/articles/1/comments?sort_by=votes')
         .expect(200)
         .then(({ body }) => {
-          expect(body.comments[0].votes).to.eql(100);
+          expect(body.comments.votes).to.eql(100);
         }));
     });
 

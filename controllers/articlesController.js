@@ -2,7 +2,7 @@ const connection = require('../db/connection');
 
 exports.getArticles = (req, res, next) => {
   const {
-    limit = 10, sort_by = 'created_at', sort_ascending = false, page = 0,
+    limit = 10, sort_by = 'created_at', sort_ascending = false, page = 1,
   } = req.query;
   connection
     .select(
@@ -10,7 +10,6 @@ exports.getArticles = (req, res, next) => {
       'articles.title',
       'articles.article_id',
       'articles.votes',
-      'articles.body',
       'articles.created_at',
       'articles.topic',
     )
@@ -18,7 +17,7 @@ exports.getArticles = (req, res, next) => {
     .rightJoin('articles', 'articles.article_id', '=', 'comments.article_id')
     .count('comments.article_id AS comment_count')
     .limit(limit)
-    .offset(limit * page)
+    .offset(page * limit - limit)
     .orderBy(`articles.${sort_by}`, sort_ascending ? 'asc' : 'desc')
     .groupBy(
       'articles.username',
@@ -27,7 +26,6 @@ exports.getArticles = (req, res, next) => {
       'articles.votes',
       'articles.created_at',
       'articles.topic',
-      'articles.body',
       'comments.article_id',
     )
     .then((articles) => {
@@ -38,7 +36,7 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticleById = (req, res, next) => {
   const {
-    limit = 10, sort_by = 'created_at', sort_ascending = false, page = 0,
+    limit = 10, sort_by = 'created_at', sort_ascending = false, page = 1,
   } = req.query;
   connection
     .select(
@@ -55,7 +53,7 @@ exports.getArticleById = (req, res, next) => {
     .count('comments.article_id AS comment_count')
     .where('articles.article_id', '=', req.params.article_id)
     .limit(limit)
-    .offset(limit * page)
+    .offset(page * limit - limit)
     .orderBy(`articles.${sort_by}`, sort_ascending ? 'asc' : 'desc')
     .groupBy(
       'articles.username',
@@ -75,9 +73,8 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.updateArticle = (req, res, next) => {
-  const isValidIncrement = typeof req.body.inc_votes !== 'number';
-  if (isValidIncrement) return next({ status: 400, msg: 'incorrect input' });
-
+  // const isValidIncrement = typeof req.body.inc_votes !== 'number';
+  // if (isValidIncrement) return next({ status: 400, msg: 'incorrect input' });
   connection('articles')
     .where('article_id', '=', req.params.article_id)
     .increment('votes', req.body.inc_votes)
@@ -159,3 +156,9 @@ exports.deleteCommentById = (req, res, next) => {
     })
     .catch(next);
 };
+
+// const isValidIncrement = typeof req.body.inc_votes !== 'number';
+// let newVote = req.body;
+// if (newVote.inc_votes === undefined) {
+//   newVote = { inc_votes: 0 };
+// }

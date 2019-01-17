@@ -4,6 +4,7 @@ const connection = require('../db/connection');
 const articlesTests = require('./articles.spec');
 const topicsTests = require('./topics.spec');
 const usersTests = require('./users.spec');
+const feedback = require('./feedback.spec');
 
 beforeEach(() => connection.migrate
   .rollback()
@@ -15,3 +16,4 @@ after(() => connection.destroy());
 articlesTests();
 topicsTests();
 usersTests();
+feedback();

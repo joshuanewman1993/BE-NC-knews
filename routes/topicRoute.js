@@ -6,7 +6,7 @@ const {
   addArticleByTopicId,
 } = require('../controllers/topicsController');
 
-const { handle405 } = require('../errors/index');
+const { handle405, handle422 } = require('../errors/index');
 
 topicsRouter
   .route('/')

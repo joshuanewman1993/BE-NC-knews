@@ -115,7 +115,7 @@ module.exports = () => {
           .get('/api/topics/mitch/articles?page=1')
           .expect(200)
           .then(({ body }) => {
-            expect(body.article).to.have.length(1);
+            expect(body.article).to.have.length(10);
           }));
       });
     });
