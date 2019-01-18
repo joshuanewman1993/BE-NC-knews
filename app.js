@@ -1,8 +1,6 @@
 const express = require('express');
 const { handle400, handle404, handle422 } = require('./errors/index');
 
-process.env.NODE_ENV = 'test';
-
 const app = express();
 const bodyParser = require('body-parser');
 const apiRouter = require('./routes/apiRoute');
