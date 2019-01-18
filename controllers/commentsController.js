@@ -16,7 +16,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
     .rightJoin('articles', 'articles.article_id', '=', 'comments.article_id')
     .where('articles.article_id', '=', req.params.article_id)
     .limit(limit)
-    .offset(page * limit - limit)
+    .offset(limit * (page - 1))
     .orderBy(`${sort_by}`, sort_ascending ? 'asc' : 'desc')
     .then(([comments]) => {
       if (!comments) return Promise.reject({ status: 404, msg: 'article not found' });

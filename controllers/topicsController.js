@@ -37,7 +37,7 @@ exports.getArticleByTopicId = (req, res, next) => {
     .count('comments.article_id AS comment_count')
     .where('topic', '=', req.params.topic)
     .limit(limit)
-    .offset(page * limit - limit)
+    .offset(limit * (page - 1))
     .orderBy(`${sort_by}`, sort_ascending ? 'asc' : 'desc')
     .groupBy(
       'articles.username',

@@ -17,7 +17,7 @@ exports.getArticles = (req, res, next) => {
     .rightJoin('articles', 'articles.article_id', '=', 'comments.article_id')
     .count('comments.article_id AS comment_count')
     .limit(limit)
-    .offset(page * limit - limit)
+    .offset(limit * (page - 1))
     .orderBy(`articles.${sort_by}`, sort_ascending ? 'asc' : 'desc')
     .groupBy(
       'articles.username',
@@ -53,7 +53,7 @@ exports.getArticleById = (req, res, next) => {
     .count('comments.article_id AS comment_count')
     .where('articles.article_id', '=', req.params.article_id)
     .limit(limit)
-    .offset(page * limit - limit)
+    .offset(limit * (page - 1))
     .orderBy(`articles.${sort_by}`, sort_ascending ? 'asc' : 'desc')
     .groupBy(
       'articles.username',
@@ -112,7 +112,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
     .rightJoin('articles', 'articles.article_id', '=', 'comments.article_id')
     .where('articles.article_id', '=', req.params.article_id)
     .limit(limit)
-    .offset(limit * page)
+    .offset(limit * (page - 1))
     .orderBy(`${sort_by}`, sort_ascending ? 'asc' : 'desc')
     .then((comments) => {
       if (!comments) return Promise.reject({ status: 404, msg: 'article not found' });
