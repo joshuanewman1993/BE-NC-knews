@@ -18,7 +18,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
     .limit(limit)
     .offset(limit * (page - 1))
     .orderBy(`${sort_by}`, sort_ascending ? 'asc' : 'desc')
-    .then(([comments]) => {
+    .then((comments) => {
       if (!comments) return Promise.reject({ status: 404, msg: 'article not found' });
       res.status(200).send({ comments });
     })
