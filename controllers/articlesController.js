@@ -98,7 +98,7 @@ exports.deleteArticle = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const {
-    limit = 10, sort_by = 'created_at', sort_ascending = false, page = 0,
+    limit = 10, sort_by = 'created_at', sort_ascending = false, page = 1,
   } = req.query;
   connection
     .select(
